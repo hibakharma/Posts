@@ -24,8 +24,25 @@ class ListingController extends Controller
         return view('listings.create');
     }
     public function store(Request $request ){
-        Listing::create($request->all());
-        return redirect('/');
+        $formFields = $request->validate([
+            'title' => 'required',
+            'company' => 'required',
+            'location' => 'required',
+            'website' => 'required',
+            'email' => ['required', 'email'],
+            'tags' => 'required',
+            'description' => 'required'
+        ]);
+
+        if($request->hasFile('logo')) {
+            $formFields['logo'] = $request->file('logo')->store('logos', 'public');
+        }
+
+        $formFields['user_id'] = auth()->id();
+
+        Listing::create($formFields);
+
+        return redirect('/')->with('message', 'Listing created successfully!');
     }
     public function edit($id ){
        $listing= Listing::findOrFail($id);
