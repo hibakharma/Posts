@@ -21,20 +21,23 @@ class ListingController extends Controller
   }
     public function create(){
 
-
         return view('listings.create');
-
     }
     public function store(Request $request ){
-
-Listing::create($request->all());
+        Listing::create($request->all());
+        return redirect('/');
+    }
+    public function edit($id ){
+       $listing= Listing::findOrFail($id);
+        return view('listings.edit',compact('listing'));
+    }
+    public function update(Request $request){
+        $listing= Listing::findOrFail($request->id);
+        $listing->update($request->all());
         return redirect('/');
 
     }
-    public function edit($id ){
-
-        Listing::create($request->all());
-        return redirect('/');
-
+    public function destroy($id){
+      Listing::findOrFail($id)->delete();
     }
 }
